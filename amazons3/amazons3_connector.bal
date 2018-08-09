@@ -225,12 +225,9 @@ function AmazonS3Connector::deleteBucket() returns Status|AmazonS3Error {
     endpoint http:Client clientEndpoint = self.clientEndpoint;
 
     AmazonS3Error amazonS3Error = {};
-    string requestURI;
-    string host;
-
     http:Request request = new;
-    requestURI = "/";
-    host = self.bucketName + "."+ AMAZON_AWS_HOST;
+    string requestURI = "/";
+    string host = self.bucketName + "."+ AMAZON_AWS_HOST;
 
     request.setHeader(HOST, host);
     request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
