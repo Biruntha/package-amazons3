@@ -25,10 +25,10 @@ The `wso2/amazons3` package contains operations that create a bucket, delete a b
 
 ## Sample
 
-First, import the `kesavany/amazons3` package into the Ballerina project.
+First, import the `kesavan/amazons3` package into the Ballerina project.
 
 ```ballerina
-import kesavany/amazons3;
+import kesavan/amazons3;
 ```
     
 The Amazon S3 connector can be instantiated using the accessKeyId, secretAccessKey, region, 

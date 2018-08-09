@@ -23,10 +23,10 @@ git clone https://github.com/wso2-ballerina/package-amazons3.git
 
 ### Working with Amazon S3 Connector 
 
-First, import the `kesavany/amazons3` package into the Ballerina project.
+First, import the `kesavan/amazons3` package into the Ballerina project.
 
 ```ballerina
-import kesavany/amazons3;
+import kesavan/amazons3;
 ```
 
 In order for you to use the Amazon S3 Connector, first you need to create a AmazonS3 Client endpoint.
