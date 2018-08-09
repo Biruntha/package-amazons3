@@ -19,7 +19,7 @@ import ballerina/http;
 
 function AmazonS3Connector::getBucketList() returns BucketList|AmazonS3Error {
 
-    endpoint http:Client clientEndpoint = getURL("");
+    endpoint http:Client clientEndpoint = getClientEndpoint("");
 
     AmazonS3Error amazonS3Error = {};
     http:Request request = new;
@@ -60,7 +60,7 @@ function AmazonS3Connector::getBucketList() returns BucketList|AmazonS3Error {
 
 function AmazonS3Connector::createBucket(string bucketName) returns Status|AmazonS3Error {
 
-    endpoint http:Client clientEndpoint = getURL(bucketName);
+    endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
     AmazonS3Error amazonS3Error = {};
     http:Request request = new;
@@ -86,7 +86,7 @@ function AmazonS3Connector::createBucket(string bucketName) returns Status|Amazo
 
 function AmazonS3Connector::getObjectsInBucket(string bucketName) returns S3ObjectList|AmazonS3Error {
 
-    endpoint http:Client clientEndpoint = getURL(bucketName);
+    endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
     AmazonS3Error amazonS3Error = {};
     http:Request request = new;
@@ -128,7 +128,7 @@ function AmazonS3Connector::getObjectsInBucket(string bucketName) returns S3Obje
 
 function AmazonS3Connector::getObject(string bucketName, string objectName) returns S3ObjectContent|AmazonS3Error {
 
-    endpoint http:Client clientEndpoint = getURL(bucketName);
+    endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
     AmazonS3Error amazonS3Error = {};
     http:Request request = new;
@@ -169,7 +169,7 @@ function AmazonS3Connector::getObject(string bucketName, string objectName) retu
 
 function AmazonS3Connector::createObject(string bucketName, string objectName, string payload) returns Status|AmazonS3Error {
 
-    endpoint http:Client clientEndpoint = getURL(bucketName);
+    endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
     AmazonS3Error amazonS3Error = {};
     http:Request request = new;
@@ -195,7 +195,7 @@ function AmazonS3Connector::createObject(string bucketName, string objectName, s
 
 function AmazonS3Connector::deleteObject(string bucketName, string objectName) returns Status|AmazonS3Error {
 
-    endpoint http:Client clientEndpoint = getURL(bucketName);
+    endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
     AmazonS3Error amazonS3Error = {};
     http:Request request = new;
@@ -222,7 +222,7 @@ function AmazonS3Connector::deleteObject(string bucketName, string objectName) r
 
 function AmazonS3Connector::deleteBucket(string bucketName) returns Status|AmazonS3Error {
 
-    endpoint http:Client clientEndpoint = getURL(bucketName);
+    endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
     AmazonS3Error amazonS3Error = {};
     http:Request request = new;
@@ -247,7 +247,7 @@ function AmazonS3Connector::deleteBucket(string bucketName) returns Status|Amazo
     }
 }
 
-function getURL(string bucketName) returns http:Client {
+function getClientEndpoint(string bucketName) returns http:Client {
     http:ClientEndpointConfig clientConfig = {};
     if (bucketName != "" ){
         clientConfig.url = HTTPS + bucketName + "." + AMAZON_AWS_HOST;
