@@ -63,10 +63,15 @@ function convertToS3ObjectList(xml response) returns S3ObjectList {
     return s3ObjectList;
 }
 
-function convertToStatus(string success, int statusCode) returns Status {
+function convertToStatus(int statusCode) returns Status {
     Status s = {};
-    s.success = success;
     s.statusCode = statusCode;
+    if (statusCode == 200 || statusCode == 204){
+        s.success = TRUE;
+    }
+    else {
+        s.success = FALSE;
+    }
     return s;
 }
 

@@ -22,12 +22,9 @@ function AmazonS3Connector::getBucketList() returns BucketList|AmazonS3Error {
     endpoint http:Client clientEndpoint = self.clientEndpoint;
 
     AmazonS3Error amazonS3Error = {};
-    string requestURI;
-    string host;
-
     http:Request request = new;
-    requestURI = "/";
-    host = AMAZON_AWS_HOST;
+    string requestURI = "/";
+    string host = AMAZON_AWS_HOST;
 
     request.setHeader(HOST, host);
     request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
@@ -66,12 +63,9 @@ function AmazonS3Connector::createBucket() returns Status|AmazonS3Error {
     endpoint http:Client clientEndpoint = self.clientEndpoint;
 
     AmazonS3Error amazonS3Error = {};
-    string requestURI;
-    string host;
-
     http:Request request = new;
-    requestURI = "/";
-    host = self.bucketName + "."+ AMAZON_AWS_HOST;
+    string requestURI = "/";
+    string host = self.bucketName + "."+ AMAZON_AWS_HOST;
 
     request.setHeader(HOST, host);
     request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
@@ -85,12 +79,7 @@ function AmazonS3Connector::createBucket() returns Status|AmazonS3Error {
         }
         http:Response response => {
             int statusCode = response.statusCode;
-            if (statusCode == 200) {
-                return convertToStatus(TRUE, statusCode);
-            }
-            else {
-                return convertToStatus(FALSE, statusCode);
-            }
+            return convertToStatus(statusCode);
         }
     }
 }
@@ -100,12 +89,9 @@ function AmazonS3Connector::getObjectsInBucket() returns S3ObjectList|AmazonS3Er
     endpoint http:Client clientEndpoint = self.clientEndpoint;
 
     AmazonS3Error amazonS3Error = {};
-    string requestURI;
-    string host;
-
     http:Request request = new;
-    requestURI = "/";
-    host = self.bucketName + "."+ AMAZON_AWS_HOST;
+    string requestURI = "/";
+    string host = self.bucketName + "."+ AMAZON_AWS_HOST;
 
     request.setHeader(HOST, host);
     request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
@@ -145,12 +131,9 @@ function AmazonS3Connector::getObject(string objectName) returns S3ObjectContent
     endpoint http:Client clientEndpoint = self.clientEndpoint;
 
     AmazonS3Error amazonS3Error = {};
-    string requestURI;
-    string host;
-
     http:Request request = new;
-    requestURI = "/" + objectName;
-    host = self.bucketName + "."+ AMAZON_AWS_HOST;
+    string requestURI = "/" + objectName;
+    string host = self.bucketName + "."+ AMAZON_AWS_HOST;
 
     request.setHeader(HOST, host);
     request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
@@ -189,12 +172,9 @@ function AmazonS3Connector::createObject(string objectName, string payload) retu
     endpoint http:Client clientEndpoint = self.clientEndpoint;
 
     AmazonS3Error amazonS3Error = {};
-    string requestURI;
-    string host;
-
     http:Request request = new;
-    requestURI = "/" + objectName;
-    host = self.bucketName + "."+ AMAZON_AWS_HOST;
+    string requestURI = "/" + objectName;
+    string host = self.bucketName + "."+ AMAZON_AWS_HOST;
 
     request.setHeader(HOST, host);
     request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
@@ -208,12 +188,7 @@ function AmazonS3Connector::createObject(string objectName, string payload) retu
         }
         http:Response response => {
             int statusCode = response.statusCode;
-            if (statusCode == 200) {
-                return convertToStatus(TRUE, statusCode);
-            }
-            else {
-                return convertToStatus(FALSE, statusCode);
-            }
+            return convertToStatus(statusCode);
         }
     }
 }
@@ -223,12 +198,9 @@ function AmazonS3Connector::deleteObject(string objectName) returns Status|Amazo
     endpoint http:Client clientEndpoint = self.clientEndpoint;
 
     AmazonS3Error amazonS3Error = {};
-    string requestURI;
-    string host;
-
     http:Request request = new;
-    requestURI = "/" + objectName;
-    host = self.bucketName + "."+ AMAZON_AWS_HOST;
+    string requestURI = "/" + objectName;
+    string host = self.bucketName + "."+ AMAZON_AWS_HOST;
 
     request.setHeader(HOST, host);
     request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
@@ -243,12 +215,7 @@ function AmazonS3Connector::deleteObject(string objectName) returns Status|Amazo
         }
         http:Response response => {
             int statusCode = response.statusCode;
-            if (statusCode == 204) {
-                return convertToStatus(TRUE, statusCode);
-            }
-            else {
-                return convertToStatus(FALSE, statusCode);
-            }
+            return convertToStatus(statusCode);
         }
     }
 }
@@ -278,12 +245,7 @@ function AmazonS3Connector::deleteBucket() returns Status|AmazonS3Error {
         }
         http:Response response => {
             int statusCode = response.statusCode;
-            if (statusCode == 204) {
-                return convertToStatus(TRUE, statusCode);
-            }
-            else {
-                return convertToStatus(FALSE, statusCode);
-            }
+            return convertToStatus(statusCode);
         }
     }
 }

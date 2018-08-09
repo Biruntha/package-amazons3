@@ -78,8 +78,8 @@ The `getBucketList` function retrives the existing buckets. It returns a `Bucket
 var getBucketListResponse = amazonS3Client -> getBucketList();
 match getBucketListResponse {
     BucketList bucketList => {
-    io:println("Owner Id: " + bucketList.owner.id);
-    o:println("Name of the first bucket: " + bucketList.buckets[0].name);
+        io:println("Owner Id: " + bucketList.owner.id);
+        io:println("Name of the first bucket: " + bucketList.buckets[0].name);
     }
     amazons3:AmazonS3Error e => io:println(e);
 }

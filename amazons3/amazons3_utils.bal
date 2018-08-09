@@ -122,8 +122,9 @@ function generateSignature(http:Request request, string accessKeyId, string secr
     signValue = (AWS4 + secretAccessKey);
     encodedSignValue = check signValue.base64Encode();
     signingKey = crypto:hmac(TERMINATION_STRING, crypto:hmac(SERVICE_NAME, crypto:hmac(region, crypto:hmac(shortDate,
-                    encodedSignValue, keyEncoding = "BASE64", crypto:SHA256).base16ToBase64Encode(), keyEncoding = "BASE64", crypto:SHA256).base16ToBase64Encode(), keyEncoding = "BASE64",
-crypto:SHA256).base16ToBase64Encode(), keyEncoding = "BASE64", crypto:SHA256).base16ToBase64Encode();
+                    encodedSignValue, keyEncoding = "BASE64", crypto:SHA256).base16ToBase64Encode(),
+                keyEncoding = "BASE64", crypto:SHA256).base16ToBase64Encode(), keyEncoding = "BASE64",
+            crypto:SHA256).base16ToBase64Encode(), keyEncoding = "BASE64", crypto:SHA256).base16ToBase64Encode();
 
     authHeader = authHeader + (AWS4_HMAC_SHA256);
     authHeader = authHeader + (" ");
