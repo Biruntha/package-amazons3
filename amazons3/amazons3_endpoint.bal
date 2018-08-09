@@ -20,17 +20,9 @@ import ballerina/http;
 import ballerina/io;
 
 function Client::init(AmazonS3Configuration config) {
-    self.amazonS3Connector.bucketName = config.bucketName;
     self.amazonS3Connector.accessKeyId = config.accessKeyId;
     self.amazonS3Connector.secretAccessKey = config.secretAccessKey;
     self.amazonS3Connector.region = config.region;
-    if (self.amazonS3Connector.bucketName != "" ){
-        config.clientConfig.url = HTTPS +self.amazonS3Connector.bucketName + "." + AMAZON_AWS_HOST;
-    }
-    else {
-        config.clientConfig.url = HTTPS + AMAZON_AWS_HOST;
-    }
-    self.amazonS3Connector.clientEndpoint.init(config.clientConfig);
 }
 
 function Client::getCallerActions() returns AmazonS3Connector {

@@ -16,20 +16,18 @@
 // under the License.
 //
 
+import ballerina/http;
+
 documentation {
     Define the Amazon S3 connector.
     F{{accessKeyId}} - The access key is of the Amazon S3 account.
     F{{secretAccessKey}} - The secret access key of the Amazon S3 account.
     F{{region}} - The AWS Region.
-    F{{bucketName}} - The name of the bucket.
-    F{{clientEndpoint}} - HTTP client endpoint.
 }
 public type AmazonS3Connector object {
     public string accessKeyId;
     public string secretAccessKey;
     public string region;
-    public string bucketName;
-    public http:Client clientEndpoint = new;
 
     documentation {
         Retrieve the existing buckets.
@@ -41,20 +39,20 @@ public type AmazonS3Connector object {
         Create a bucket.
         R{{}} - If success, returns Status object, else returns AmazonS3Error object.
     }
-    public function createBucket() returns Status|AmazonS3Error;
+    public function createBucket(string bucketName) returns Status|AmazonS3Error;
 
     documentation {
         Retrieve the existing objects in a given bucket.
         R{{}} - If success, returns S3ObjectList object, else returns AmazonS3Error object.
     }
-    public function getObjectsInBucket() returns S3ObjectList|AmazonS3Error;
+    public function getObjectsInBucket(string bucketName) returns S3ObjectList|AmazonS3Error;
 
     documentation {
         Retrieve the existing buckets.
         P{{objectName}} - The name of the object.
         R{{}} - If success, returns S3ObjectContent object, else returns AmazonS3Error object.
     }
-    public function getObject(string objectName) returns S3ObjectContent|AmazonS3Error;
+    public function getObject(string bucketName, string objectName) returns S3ObjectContent|AmazonS3Error;
 
     documentation {
         Create an object.
@@ -62,20 +60,20 @@ public type AmazonS3Connector object {
         P{{payload}} - The file that needed to be added to the bucket.
         R{{}} - If success, returns Status object, else returns AmazonS3Error object.
     }
-    public function createObject(string objectName, string payload) returns Status|AmazonS3Error;
+    public function createObject(string bucketName, string objectName, string payload) returns Status|AmazonS3Error;
 
     documentation {
         Delete an object.
         P{{objectName}} - The name of the object.
         R{{}} - If success, returns Status object, else returns AmazonS3Error object.
     }
-    public function deleteObject(string objectName) returns Status|AmazonS3Error;
+    public function deleteObject(string bucketName, string objectName) returns Status|AmazonS3Error;
 
     documentation {
         Delete a bucket.
         R{{}} - If success, returns Status object, else returns AmazonS3Error object.
     }
-    public function deleteBucket() returns Status|AmazonS3Error;
+    public function deleteBucket(string bucketName) returns Status|AmazonS3Error;
 };
 
 documentation {
@@ -108,14 +106,12 @@ documentation {
     F{{accessKeyId}} - The access key is of the Amazon S3 account.
     F{{secretAccessKey}} - The secret access key of the Amazon S3 account.
     F{{region}} - The AWS Region.
-    F{{bucketName}} - The name of the bucket.
     F{{clientConfig}} - Client endpoint configurations provided by the user.
 }
 public type AmazonS3Configuration record {
     string accessKeyId;
     string secretAccessKey;
     string region;
-    string bucketName;
     http:ClientEndpointConfig clientConfig = {};
 };
 
