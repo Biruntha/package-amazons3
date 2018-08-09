@@ -57,8 +57,15 @@ function main(string... args) {
     };
     string status = "Amazon S3 endpoint test";
 
-    amazons3:Status bucketStatus = check amazonS3Client -> createBucket();
-    string status = <string> bucketStatus.success;
-    io:println("Bucket Status: " + status);
+    var createBucketResponse = amazonS3Client -> createBucket();
+    match createBucketResponse {
+        amazons3:Status bucketStatus => {
+            //If successful, returns the status value as TRUE.
+            string status = <string> bucketStatus.success;
+            io:println("Bucket Status: " + status);
+        }
+        //Unsuccessful attempts return a AmazonS3 error.
+        amazons3:AmazonS3Error e => io:println(e);
+    }
 }
 ```

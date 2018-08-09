@@ -58,7 +58,7 @@ The `createBucket` function creates a bucket.
 
    `var createBucketResponse = amazonS3Client -> createBucket();`
    
-If the status was updated successfully, the response from the `createBucket` function is a `Status` object with the success value. If the creation was unsuccessful, the response is a `AmazonS3Error`. The `match` operation can be used to handle the response if an error occurs.
+If the creation was successful, the response from the `createBucket` function is a `Status` object with the success value. If the creation was unsuccessful, the response is a `AmazonS3Error`. The `match` operation can be used to handle the response if an error occurs.
 
 ```ballerina
 match createBucketResponse {
