@@ -19,7 +19,7 @@ import ballerina/http;
 
 function AmazonS3Connector::getBucketList() returns BucketList|AmazonS3Error {
 
-    endpoint http:Client clientEndpoint = self.clientEndpoint;
+    endpoint http:Client clientEndpoint = getClientEndpoint("");
 
     AmazonS3Error amazonS3Error = {};
     http:Request request = new;
@@ -58,14 +58,14 @@ function AmazonS3Connector::getBucketList() returns BucketList|AmazonS3Error {
     }
 }
 
-function AmazonS3Connector::createBucket() returns Status|AmazonS3Error {
+function AmazonS3Connector::createBucket(string bucketName) returns Status|AmazonS3Error {
 
-    endpoint http:Client clientEndpoint = self.clientEndpoint;
+    endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
     AmazonS3Error amazonS3Error = {};
     http:Request request = new;
     string requestURI = "/";
-    string host = self.bucketName + "."+ AMAZON_AWS_HOST;
+    string host = bucketName + "."+ AMAZON_AWS_HOST;
 
     request.setHeader(HOST, host);
     request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
@@ -84,14 +84,14 @@ function AmazonS3Connector::createBucket() returns Status|AmazonS3Error {
     }
 }
 
-function AmazonS3Connector::getObjectsInBucket() returns S3ObjectList|AmazonS3Error {
+function AmazonS3Connector::getObjectsInBucket(string bucketName) returns S3ObjectList|AmazonS3Error {
 
-    endpoint http:Client clientEndpoint = self.clientEndpoint;
+    endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
     AmazonS3Error amazonS3Error = {};
     http:Request request = new;
     string requestURI = "/";
-    string host = self.bucketName + "."+ AMAZON_AWS_HOST;
+    string host = bucketName + "."+ AMAZON_AWS_HOST;
 
     request.setHeader(HOST, host);
     request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
@@ -126,14 +126,14 @@ function AmazonS3Connector::getObjectsInBucket() returns S3ObjectList|AmazonS3Er
     }
 }
 
-function AmazonS3Connector::getObject(string objectName) returns S3ObjectContent|AmazonS3Error {
+function AmazonS3Connector::getObject(string bucketName, string objectName) returns S3ObjectContent|AmazonS3Error {
 
-    endpoint http:Client clientEndpoint = self.clientEndpoint;
+    endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
     AmazonS3Error amazonS3Error = {};
     http:Request request = new;
     string requestURI = "/" + objectName;
-    string host = self.bucketName + "."+ AMAZON_AWS_HOST;
+    string host = bucketName + "."+ AMAZON_AWS_HOST;
 
     request.setHeader(HOST, host);
     request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
@@ -167,14 +167,14 @@ function AmazonS3Connector::getObject(string objectName) returns S3ObjectContent
     }
 }
 
-function AmazonS3Connector::createObject(string objectName, string payload) returns Status|AmazonS3Error {
+function AmazonS3Connector::createObject(string bucketName, string objectName, string payload) returns Status|AmazonS3Error {
 
-    endpoint http:Client clientEndpoint = self.clientEndpoint;
+    endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
     AmazonS3Error amazonS3Error = {};
     http:Request request = new;
     string requestURI = "/" + objectName;
-    string host = self.bucketName + "."+ AMAZON_AWS_HOST;
+    string host = bucketName + "."+ AMAZON_AWS_HOST;
 
     request.setHeader(HOST, host);
     request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
@@ -193,14 +193,14 @@ function AmazonS3Connector::createObject(string objectName, string payload) retu
     }
 }
 
-function AmazonS3Connector::deleteObject(string objectName) returns Status|AmazonS3Error {
+function AmazonS3Connector::deleteObject(string bucketName, string objectName) returns Status|AmazonS3Error {
 
-    endpoint http:Client clientEndpoint = self.clientEndpoint;
+    endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
     AmazonS3Error amazonS3Error = {};
     http:Request request = new;
     string requestURI = "/" + objectName;
-    string host = self.bucketName + "."+ AMAZON_AWS_HOST;
+    string host = bucketName + "."+ AMAZON_AWS_HOST;
 
     request.setHeader(HOST, host);
     request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
@@ -220,14 +220,14 @@ function AmazonS3Connector::deleteObject(string objectName) returns Status|Amazo
     }
 }
 
-function AmazonS3Connector::deleteBucket() returns Status|AmazonS3Error {
+function AmazonS3Connector::deleteBucket(string bucketName) returns Status|AmazonS3Error {
 
-    endpoint http:Client clientEndpoint = self.clientEndpoint;
+    endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
     AmazonS3Error amazonS3Error = {};
     http:Request request = new;
     string requestURI = "/";
-    string host = self.bucketName + "."+ AMAZON_AWS_HOST;
+    string host = bucketName + "."+ AMAZON_AWS_HOST;
 
     request.setHeader(HOST, host);
     request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
@@ -245,4 +245,16 @@ function AmazonS3Connector::deleteBucket() returns Status|AmazonS3Error {
             return convertToStatus(statusCode);
         }
     }
+}
+
+function getClientEndpoint(string bucketName) returns http:Client {
+    http:ClientEndpointConfig clientConfig = {};
+    if (bucketName != "" ){
+        clientConfig.url = HTTPS + bucketName + "." + AMAZON_AWS_HOST;
+    } else {
+        clientConfig.url = HTTPS + AMAZON_AWS_HOST;
+    }
+    http:Client clientEndpoint = new;
+    clientEndpoint.init(clientConfig);
+    return clientEndpoint;
 }

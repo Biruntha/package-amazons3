@@ -26,24 +26,16 @@ string testSecretAccessKey = config:getAsString("SECRET_ACCESS_KEY");
 string testRegion = config:getAsString("REGION");
 string testBucketName = config:getAsString("BUCKET_NAME");
 
-endpoint Client amazonS3ClientForGetBucketList {
-    accessKeyId: testAccessKeyId,
-    secretAccessKey: testSecretAccessKey,
-    region: testRegion,
-    bucketName: ""
-};
-
 endpoint Client amazonS3Client {
     accessKeyId: testAccessKeyId,
     secretAccessKey: testSecretAccessKey,
-    region: testRegion,
-    bucketName: testBucketName
+    region: testRegion
 };
 
 @test:Config
 function testGetBucketList() {
     log:printInfo("amazonS3ClientForGetBucketList -> getBucketList()");
-    var rs = amazonS3ClientForGetBucketList -> getBucketList();
+    var rs = amazonS3Client -> getBucketList();
     match rs {
         BucketList bucketList => {
             string ownerId = bucketList.owner.id;
@@ -60,10 +52,10 @@ function testGetBucketList() {
 }
 function testCreateBucket() {
     log:printInfo("amazonS3Client -> createBucket()");
-    var rs = amazonS3Client -> createBucket();
+    var rs = amazonS3Client -> createBucket(testBucketName);
     match rs {
-        Status staus => {
-            string bucketStatus = staus.success;
+        Status status => {
+            string bucketStatus = status.success;
             test:assertTrue(bucketStatus.equalsIgnoreCase(TRUE), msg = "Failed createBucket()");
         }
         AmazonS3Error err => {
@@ -77,7 +69,7 @@ function testCreateBucket() {
 }
 function testCreateObject() {
     log:printInfo("amazonS3Client -> createObject()");
-    var rs = amazonS3Client -> createObject("test.txt","Sample content");
+    var rs = amazonS3Client -> createObject(testBucketName, "test.txt","Sample content");
     match rs {
         Status staus => {
             string objectStatus = staus.success;
@@ -94,7 +86,7 @@ function testCreateObject() {
 }
 function testGetObject() {
     log:printInfo("amazonS3Client -> getObject()");
-    var rs = amazonS3Client->getObject("test.txt");
+    var rs = amazonS3Client->getObject(testBucketName, "test.txt");
     match rs {
         S3ObjectContent s3ObjectContent => {
             string content = s3ObjectContent.content;
@@ -112,7 +104,7 @@ function testGetObject() {
 }
 function testGetObjectsInBucket() {
     log:printInfo("amazonS3Client -> getObjectsInBucket()");
-    var rs = amazonS3Client -> getObjectsInBucket();
+    var rs = amazonS3Client -> getObjectsInBucket(testBucketName);
     match rs {
         S3ObjectList s3ObjectList => {
             string name = s3ObjectList.name;
@@ -129,7 +121,7 @@ function testGetObjectsInBucket() {
 }
 function testDeleteObject() {
     log:printInfo("amazonS3Client -> deleteObject()");
-    var rs = amazonS3Client -> deleteObject("test.txt");
+    var rs = amazonS3Client -> deleteObject(testBucketName, "test.txt");
     match rs {
         Status staus => {
             string objectStatus = staus.success;
@@ -146,7 +138,7 @@ function testDeleteObject() {
 }
 function testDeleteBucket() {
     log:printInfo("amazonS3Client -> deleteBucket()");
-    var rs = amazonS3Client -> deleteBucket();
+    var rs = amazonS3Client -> deleteBucket(testBucketName);
     match rs {
         Status staus => {
             string bucketStatus = staus.success;
