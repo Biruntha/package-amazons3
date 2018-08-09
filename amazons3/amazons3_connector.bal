@@ -84,7 +84,7 @@ function AmazonS3Connector::createBucket(string bucketName) returns Status|Amazo
     }
 }
 
-function AmazonS3Connector::getObjectsInBucket(string bucketName) returns S3ObjectList|AmazonS3Error {
+function AmazonS3Connector::getAllObjects(string bucketName) returns S3ObjectList|AmazonS3Error {
 
     endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 

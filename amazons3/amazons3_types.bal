@@ -45,7 +45,7 @@ public type AmazonS3Connector object {
         Retrieve the existing objects in a given bucket.
         R{{}} - If success, returns S3ObjectList object, else returns AmazonS3Error object.
     }
-    public function getObjectsInBucket(string bucketName) returns S3ObjectList|AmazonS3Error;
+    public function getAllObjects(string bucketName) returns S3ObjectList|AmazonS3Error;
 
     documentation {
         Retrieve the existing buckets.

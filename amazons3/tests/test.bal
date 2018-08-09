@@ -102,13 +102,13 @@ function testGetObject() {
 @test:Config {
     dependsOn: ["testGetObject"]
 }
-function testGetObjectsInBucket() {
-    log:printInfo("amazonS3Client -> getObjectsInBucket()");
-    var rs = amazonS3Client -> getObjectsInBucket(testBucketName);
+function testGetAllObjects() {
+    log:printInfo("amazonS3Client -> getAllObjects()");
+    var rs = amazonS3Client -> getAllObjects(testBucketName);
     match rs {
         S3ObjectList s3ObjectList => {
             string name = s3ObjectList.name;
-            test:assertTrue(name.length() > 0, msg = "Failed to call getObjectsInBucket()");
+            test:assertTrue(name.length() > 0, msg = "Failed to call getAllObjects()");
         }
         AmazonS3Error err => {
             test:assertFail(msg = err.message);
@@ -117,7 +117,7 @@ function testGetObjectsInBucket() {
 }
 
 @test:Config {
-    dependsOn: ["testGetObjectsInBucket"]
+    dependsOn: ["testGetAllObjects"]
 }
 function testDeleteObject() {
     log:printInfo("amazonS3Client -> deleteObject()");
