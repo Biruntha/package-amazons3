@@ -7,12 +7,12 @@ The Amazon S3 connector allows you to access the Amazon S3 REST API through ball
 
 **Buckets Operations**
 
-The `wso2/amazons3` package contains operations that work with buckets. You can list the existing buckets, create a bucket, 
+The `kesavan/amazons3` package contains operations that work with buckets. You can list the existing buckets, create a bucket, 
 delete a bucket and list objects in a bucket.
 
 **Objects Operations**
 
-The `wso2/amazons3` package contains operations that create a bucket, delete a bucket and retrieve a bucket. 
+The `kesavan/amazons3` package contains operations that create a bucket, delete a bucket and retrieve a bucket. 
 
 
 

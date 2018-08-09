@@ -45,7 +45,7 @@ endpoint amazons3:Client amazonS3Client {
 
 ```ballerina
 import ballerina/io;
-import wso2/amazons3;
+import kesavan/amazons3;
 
 function main(string... args) {
     endpoint amazons3:Client amazonS3Client {
@@ -55,7 +55,6 @@ function main(string... args) {
         bucketName:"",
         clientConfig:{}
     };
-    string status = "Amazon S3 endpoint test";
 
     var createBucketResponse = amazonS3Client -> createBucket();
     match createBucketResponse {
