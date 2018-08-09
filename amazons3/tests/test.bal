@@ -37,9 +37,9 @@ function testGetBucketList() {
     log:printInfo("amazonS3ClientForGetBucketList -> getBucketList()");
     var rs = amazonS3Client -> getBucketList();
     match rs {
-        BucketList bucketList => {
-            string ownerId = bucketList.owner.id;
-            test:assertTrue(ownerId.length() > 0, msg = "Failed to call getBucketList()");
+        Bucket [] buckets => {
+            string bucketName = buckets[0].name;
+            test:assertTrue(bucketName.length() > 0, msg = "Failed to call getBucketList()");
         }
         AmazonS3Error err => {
             test:assertFail(msg = err.message);
@@ -55,8 +55,8 @@ function testCreateBucket() {
     var rs = amazonS3Client -> createBucket(testBucketName);
     match rs {
         Status status => {
-            string bucketStatus = status.success;
-            test:assertTrue(bucketStatus.equalsIgnoreCase(TRUE), msg = "Failed createBucket()");
+            boolean bucketStatus = status.success;
+            test:assertTrue(bucketStatus, msg = "Failed createBucket()");
         }
         AmazonS3Error err => {
             test:assertFail(msg = err.message);
@@ -72,8 +72,8 @@ function testCreateObject() {
     var rs = amazonS3Client -> createObject(testBucketName, "test.txt","Sample content");
     match rs {
         Status staus => {
-            string objectStatus = staus.success;
-            test:assertTrue(objectStatus.equalsIgnoreCase(TRUE), msg = "Failed createObject()");
+            boolean objectStatus = staus.success;
+            test:assertTrue(objectStatus, msg = "Failed createObject()");
         }
         AmazonS3Error err => {
             test:assertFail(msg = err.message);
@@ -124,8 +124,8 @@ function testDeleteObject() {
     var rs = amazonS3Client -> deleteObject(testBucketName, "test.txt");
     match rs {
         Status staus => {
-            string objectStatus = staus.success;
-            test:assertTrue(objectStatus.equalsIgnoreCase(TRUE), msg = "Failed deleteObject()");
+            boolean objectStatus = staus.success;
+            test:assertTrue(objectStatus, msg = "Failed deleteObject()");
         }
         AmazonS3Error err => {
             test:assertFail(msg = err.message);
@@ -141,8 +141,8 @@ function testDeleteBucket() {
     var rs = amazonS3Client -> deleteBucket(testBucketName);
     match rs {
         Status staus => {
-            string bucketStatus = staus.success;
-            test:assertTrue(bucketStatus.equalsIgnoreCase(TRUE), msg = "Failed deleteBucket()");
+            boolean bucketStatus = staus.success;
+            test:assertTrue(bucketStatus, msg = "Failed deleteBucket()");
         }
         AmazonS3Error err => {
             test:assertFail(msg = err.message);

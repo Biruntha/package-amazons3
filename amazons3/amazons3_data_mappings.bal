@@ -16,14 +16,9 @@
 
 import ballerina/io;
 
-function converTotBucketList(xml response) returns BucketList {
-    BucketList bucketList = {};
+function converTotBuckets(xml response) returns Bucket[] {
     Bucket[] buckets;
-    Owner owner = {};
     xml bucketsDetails = response["Buckets"];
-    owner.id = response["Owner"]["ID"].getTextValue();
-    owner.displayName = response["Owner"]["DisplayName"].getTextValue();
-
     foreach i, b in bucketsDetails.*.elements(){
         xml bucketDetails = b.elements();
         Bucket bucket = {};
@@ -32,9 +27,7 @@ function converTotBucketList(xml response) returns BucketList {
         buckets[i]= bucket;
 
     }
-    bucketList.owner = owner;
-    bucketList.buckets = buckets;
-    return bucketList;
+    return buckets;
 }
 
 function convertToS3ObjectList(xml response) returns S3ObjectList {
@@ -67,10 +60,10 @@ function convertToStatus(int statusCode) returns Status {
     Status s = {};
     s.statusCode = statusCode;
     if (statusCode == 200 || statusCode == 204){
-        s.success = TRUE;
+        s.success = true;
     }
     else {
-        s.success = FALSE;
+        s.success = false;
     }
     return s;
 }

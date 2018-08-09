@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/http;
 
-function AmazonS3Connector::getBucketList() returns BucketList|AmazonS3Error {
+function AmazonS3Connector::getBucketList() returns Bucket[]|AmazonS3Error {
 
     endpoint http:Client clientEndpoint = getClientEndpoint("");
 
@@ -46,7 +46,7 @@ function AmazonS3Connector::getBucketList() returns BucketList|AmazonS3Error {
                 }
                 xml xmlResponse => {
                     if (statusCode == 200) {
-                        return converTotBucketList(xmlResponse);
+                        return converTotBuckets(xmlResponse);
                     } else {
                         amazonS3Error.message = xmlResponse["Message"].getTextValue();
                         amazonS3Error.statusCode = statusCode;

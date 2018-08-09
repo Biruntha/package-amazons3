@@ -50,7 +50,7 @@ endpoint amazons3:Client amazonS3Client {
     accessKeyId:"<your_access_key_id>",
     secretAccessKey:"<your_secret_access_key>",
     region:"<your_region>",
-    bucketName:"<your_bucket_name>"
+    clientConfig:{}
 };
 ```
 
@@ -73,15 +73,8 @@ match createBucketResponse {
 ```
 
 The `getBucketList` function retrives the existing buckets. It returns a `BucketList` object if successful or `AmazonS3Error` if unsuccessful.
-For the `getBucketList` you must create a new Amazon S3 client config with empty bucketName.
 
 ```ballerina
-endpoint amazons3:Client amazonS3ClientForGetBucketList {
-    accessKeyId:"<your_access_key_id>",
-    secretAccessKey:"<your_secret_access_key>",
-    region:"<your_region>",
-    bucketName:""
-};
 var getBucketListResponse = amazonS3ClientForGetBucketList -> getBucketList();
 match getBucketListResponse {
     amazons3:BucketList bucketList => {
@@ -101,32 +94,23 @@ function main(string... args) {
         accessKeyId:"<your_access_key_id>",
         secretAccessKey:"<your_secret_access_key>",
         region:"<your_region>",
-        bucketName:"<your_bucket_name>",
         clientConfig:{}
     };
     
-    endpoint amazons3:Client amazonS3ClientForGetBucketList {
-        accessKeyId: "<your_access_key_id>",
-        secretAccessKey: "<your_secret_access_key>",
-        region: "<your_region>",
-        bucketName: "",
-        clientConfig:{}
-    };
-
-    var createBucketResponse = amazonS3Client -> createBucket();
+    string bucketName = "testBallerina";
+    var createBucketResponse = amazonS3Client -> createBucket(bucketName);
     match createBucketResponse {
         amazons3:Status bucketStatus => {
-            string status = <string> bucketStatus.success;
+            boolean status = bucketStatus.success;
             io:println("Bucket Status: " + status);
         }
         amazons3:AmazonS3Error e => io:println(e);
     }
     
-    var getBucketListResponse = amazonS3ClientForGetBucketList -> getBucketList();
+    var getBucketListResponse = amazonS3Client -> getBucketList();
     match getBucketListResponse {
-        amazons3:BucketList bucketList => {
-            io:println("Owner Id: " + bucketList.owner.id);
-            io:println("Name of the first bucket: " + bucketList.buckets[0].name);
+        amazons3:Bucket[] buckets => {
+            io:println("Name of the first bucket: " + buckets[0].name);
         }
         amazons3:AmazonS3Error e => io:println(e);
     }

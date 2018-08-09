@@ -18,7 +18,7 @@ The following sections provide you with information on how to use the Ballerina 
 
 Clone the repository by running the following command 
 ```shell
-git clone https://github.com/wso2-ballerina/package-amazons3.git
+git clone https://github.com/kesavany/package-amazons3.git
 ```
 
 ### Working with Amazon S3 Connector 
@@ -36,7 +36,6 @@ endpoint amazons3:Client amazonS3Client {
     accessKeyId:"",
     secretAccessKey:"",
     region:"",
-    bucketName:"",
     clientConfig:{}
 };
 ```
@@ -52,11 +51,11 @@ function main(string... args) {
         accessKeyId:"",
         secretAccessKey:"",
         region:"",
-        bucketName:"",
         clientConfig:{}
     };
 
-    var createBucketResponse = amazonS3Client -> createBucket();
+    string bucketName = "testBallerina";
+    var createBucketResponse = amazonS3Client -> createBucket(bucketName);
     match createBucketResponse {
         amazons3:Status bucketStatus => {
             //If successful, returns the status value as TRUE.

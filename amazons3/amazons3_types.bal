@@ -33,7 +33,7 @@ public type AmazonS3Connector object {
         Retrieve the existing buckets.
         R{{}} - If success, returns BucketList object, else returns AmazonS3Error object.
     }
-    public function getBucketList() returns BucketList|AmazonS3Error;
+    public function getBucketList() returns Bucket[]|AmazonS3Error;
 
     documentation {
         Create a bucket.
@@ -114,16 +114,6 @@ public type AmazonS3Configuration record {
 };
 
 documentation {
-    Define the bucket list type.
-    F{{owner}} - The owner type.
-    F{{buckets}} - The array of bucket type.
-}
-public type BucketList record {
-    Owner owner;
-    Bucket[] buckets;
-};
-
-documentation {
     Define the bucket type.
     F{{name}} - The name of the bucket.
     F{{creationDate}} - The creation date of the bucket.
@@ -172,22 +162,12 @@ public type S3Object record {
 };
 
 documentation {
-    Define the owner type.
-    F{{id}} - The id of the owner.
-    F{{displayName}} - The display name of the owner.
-}
-public type Owner record {
-    string id;
-    string displayName;
-};
-
-documentation {
     Define the status type.
     F{{success}} - The status of the AmazonS3 operation.
     F{{statusCode}} - The status code of the response.
 }
 public type Status record {
-    string success;
+    boolean success;
     int statusCode;
 };
 
