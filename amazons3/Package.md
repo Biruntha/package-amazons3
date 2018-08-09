@@ -12,7 +12,7 @@ delete a bucket and list objects in a bucket.
 
 **Objects Operations**
 
-The `kesavan/amazons3` package contains operations that create a bucket, delete a bucket and retrieve a bucket. 
+The `kesavan/amazons3` package contains operations that create an object, delete an object and retrieve an object. 
 
 
 
