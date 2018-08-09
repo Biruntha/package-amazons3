@@ -106,13 +106,11 @@ documentation {
     F{{accessKeyId}} - The access key is of the Amazon S3 account.
     F{{secretAccessKey}} - The secret access key of the Amazon S3 account.
     F{{region}} - The AWS Region.
-    F{{clientConfig}} - Client endpoint configurations provided by the user.
 }
 public type AmazonS3Configuration record {
     string accessKeyId;
     string secretAccessKey;
     string region;
-    http:ClientEndpointConfig clientConfig = {};
 };
 
 documentation {

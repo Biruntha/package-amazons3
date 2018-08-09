@@ -26,13 +26,6 @@ string testSecretAccessKey = config:getAsString("SECRET_ACCESS_KEY");
 string testRegion = config:getAsString("REGION");
 string testBucketName = config:getAsString("BUCKET_NAME");
 
-endpoint Client amazonS3ClientForGetBucketList {
-    accessKeyId: testAccessKeyId,
-    secretAccessKey: testSecretAccessKey,
-    region: testRegion,
-    bucketName: ""
-};
-
 endpoint Client amazonS3Client {
     accessKeyId: testAccessKeyId,
     secretAccessKey: testSecretAccessKey,
@@ -42,7 +35,7 @@ endpoint Client amazonS3Client {
 @test:Config
 function testGetBucketList() {
     log:printInfo("amazonS3ClientForGetBucketList -> getBucketList()");
-    var rs = amazonS3ClientForGetBucketList -> getBucketList();
+    var rs = amazonS3Client -> getBucketList();
     match rs {
         BucketList bucketList => {
             string ownerId = bucketList.owner.id;
