@@ -21,28 +21,139 @@ import ballerina/http;
 import ballerina/log;
 import ballerina/test;
 
+string testAccessKeyId = config:getAsString("ACCESS_KEY_ID");
+string testSecretAccessKey = config:getAsString("SECRET_ACCESS_KEY");
+string testRegion = config:getAsString("REGION");
+string testBucketName = config:getAsString("BUCKET_NAME");
 
+endpoint Client amazonS3ClientForGetBucketList {
+    accessKeyId: testAccessKeyId,
+    secretAccessKey: testSecretAccessKey,
+    region: testRegion,
+    bucketName: ""
+};
 
-endpoint Client amazons3Client {
-    accessKeyId: "testAccessKeyId",
-    secretAccessKey: "testSecretAccessKey",
-    region: "testRegion"
+endpoint Client amazonS3Client {
+    accessKeyId: testAccessKeyId,
+    secretAccessKey: testSecretAccessKey,
+    region: testRegion,
+    bucketName: testBucketName
 };
 
 @test:Config
 function testGetBucketList() {
-    log:printInfo("amazons3Client -> getBucketList()");
-    var rs = amazons3Client->getBucketList();
+    log:printInfo("amazonS3ClientForGetBucketList -> getBucketList()");
+    var rs = amazonS3ClientForGetBucketList -> getBucketList();
     match rs {
-        BucketList bucket => {
-            io:println("bucket");
+        BucketList bucketList => {
+            string ownerId = bucketList.owner.id;
+            test:assertTrue(ownerId.length() > 0, msg = "Failed to call getBucketList()");
         }
         AmazonS3Error err => {
-            io:println(err);
+            test:assertFail(msg = err.message);
         }
     }
-
-    test:assertEquals(rs, "WSO2", msg = "Failed getBucketList()");
 }
 
+@test:Config {
+    dependsOn: ["testGetBucketList"]
+}
+function testCreateBucket() {
+    log:printInfo("amazonS3Client -> createBucket()");
+    var rs = amazonS3Client -> createBucket();
+    match rs {
+        Status staus => {
+            string bucketStatus = staus.success;
+            test:assertTrue(bucketStatus.equalsIgnoreCase(TRUE), msg = "Failed createBucket()");
+        }
+        AmazonS3Error err => {
+            test:assertFail(msg = err.message);
+        }
+    }
+}
 
+@test:Config {
+    dependsOn: ["testCreateBucket"]
+}
+function testCreateObject() {
+    log:printInfo("amazonS3Client -> createObject()");
+    var rs = amazonS3Client -> createObject("test.txt","Sample content");
+    match rs {
+        Status staus => {
+            string objectStatus = staus.success;
+            test:assertTrue(objectStatus.equalsIgnoreCase(TRUE), msg = "Failed createObject()");
+        }
+        AmazonS3Error err => {
+            test:assertFail(msg = err.message);
+        }
+    }
+}
+
+@test:Config {
+    dependsOn: ["testCreateObject"]
+}
+function testGetObject() {
+    log:printInfo("amazonS3Client -> getObject()");
+    var rs = amazonS3Client->getObject("test.txt");
+    match rs {
+        S3ObjectContent s3ObjectContent => {
+            string content = s3ObjectContent.content;
+            test:assertTrue(content.length() > 0, msg = "Failed to call getObject()");
+
+        }
+        AmazonS3Error err => {
+            test:assertFail(msg = err.message);
+        }
+    }
+}
+
+@test:Config {
+    dependsOn: ["testGetObject"]
+}
+function testGetObjectsInBucket() {
+    log:printInfo("amazonS3Client -> getObjectsInBucket()");
+    var rs = amazonS3Client -> getObjectsInBucket();
+    match rs {
+        S3ObjectList s3ObjectList => {
+            string name = s3ObjectList.name;
+            test:assertTrue(name.length() > 0, msg = "Failed to call getObjectsInBucket()");
+        }
+        AmazonS3Error err => {
+            test:assertFail(msg = err.message);
+        }
+    }
+}
+
+@test:Config {
+    dependsOn: ["testGetObjectsInBucket"]
+}
+function testDeleteObject() {
+    log:printInfo("amazonS3Client -> deleteObject()");
+    var rs = amazonS3Client -> deleteObject("test.txt");
+    match rs {
+        Status staus => {
+            string objectStatus = staus.success;
+            test:assertTrue(objectStatus.equalsIgnoreCase(TRUE), msg = "Failed deleteObject()");
+        }
+        AmazonS3Error err => {
+            test:assertFail(msg = err.message);
+        }
+    }
+}
+
+@test:Config {
+    dependsOn: ["testDeleteObject"]
+}
+function testDeleteBucket() {
+    log:printInfo("amazonS3Client -> deleteBucket()");
+    var rs = amazonS3Client -> deleteBucket();
+    match rs {
+        Status staus => {
+            string bucketStatus = staus.success;
+            test:assertTrue(bucketStatus.equalsIgnoreCase(TRUE), msg = "Failed deleteBucket()");
+        }
+        AmazonS3Error err => {
+            test:assertFail(msg = err.message);
+        }
+    }
+}

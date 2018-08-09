@@ -1,47 +1,28 @@
-# Ballerina GitHub Endpoint - Tests
+# Ballerina Amazon S3 Connector Test
 
-###### GitHub brings together the world's largest community of developers to discover, share, and build better software. From open source projects to private team repositories, GitHub is an all-in-one platform for collaborative development.
+The Amazon S3 connector allows you to access the Amazon S3 REST API through ballerina.
 
-The Ballerina GitHub endpoint allow users to access the GitHub API through ballerina. This endpoint uses the GitHub GraphQL API v4.0
+## Compatibility
+| Ballerina Version | Amazon S3 API Version |
+|-------------------|---------------------- |
+| 0.981.0           | 2006-03-01           |
 
-| Ballerina Version | GitHub API Version |
-|-------------------|--------------------|
-| 0.980.0           | v4                 |
+###### Running tests
 
-## Running tests
+1. Create `ballerina.conf` file in `package-amazons3`, with following keys and provide values for the variables.
+    
+    ```.conf
+    ACCESS_KEY_ID=""
+    SECRET_ACCESS_KEY=""
+    REGION=""
+    BUCKET_NAME=""
+    ```
+2. Navigate to the folder package-amazons3
 
-Initialize a ballerina project
-```
-ballerina init
-```
+3. Run tests :
 
-All the tests inside this package will make HTTP calls to the GitHub GraphQL API v4. If the HTTP call fails, then so will the test case.
-
-In order to run the tests, the user will need to have a GitHub Personal Access Token. The token can be obtained by visiting
-
-**https://github.com/{profile} -> Settings -> Developer Settings -> Personal access tokens**
-
-and provide the obtained token to the client endpoint configuration by adding the following fields to the `ballerina
-.conf`
-
-```.conf
-GITHUB_TOKEN="ACCESS_TOKEN"
-ORGANIZATION_NAME = ""
-RESOURCE_PATH = ""
-```
-
-```ballerina
-endpoint Client githubClient {
-    clientConfig: {
-        auth:{
-            scheme:http:OAUTH2,
-            accessToken:config:getAsString("GITHUB_TOKEN")
-        }
-    }
-};
-```
-
-Run tests :
-```
-ballerina test github4 --config ballerina.conf
+    ```ballerina
+    ballerina init
+    ballerina test amazons3 --config ballerina.conf
+    ```
 ```

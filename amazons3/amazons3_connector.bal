@@ -16,45 +16,31 @@
 
 import ballerina/io;
 import ballerina/http;
-import ballerina/time;
-import ballerina/crypto;
-
 
 function AmazonS3Connector::getBucketList() returns BucketList|AmazonS3Error {
 
     endpoint http:Client clientEndpoint = self.clientEndpoint;
 
     AmazonS3Error amazonS3Error = {};
-    string signature;
-    string httpMethod;
     string requestURI;
     string host;
-    string amazonEndpoint;
 
     http:Request request = new;
-
-    httpMethod = "GET";
     requestURI = "/";
-    host = "s3.amazonaws.com";
-    amazonEndpoint = "https://"+host;
+    host = AMAZON_AWS_HOST;
 
-    request.setHeader("Host", host);
-    request.setHeader("X-Amz-Content-Sha256", "UNSIGNED-PAYLOAD");
-    generateSignature(request, "XXXXXXXXXXx", "XXXXXXXXXXX", "us-east-1", httpMethod, requestURI, UNSIGNED_PAYLOAD);
+    request.setHeader(HOST, host);
+    request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
+    generateSignature(request, self.accessKeyId, self.secretAccessKey, self.region, GET, requestURI, UNSIGNED_PAYLOAD);
 
-    io:println(request.getHeader(AUTHORIZATION.toLower()));
-    io:println(request.getHeader(X_AMZ_DATE.toLower()));
-
-    //request.setHeaders(httpHeaders);
-
-    var httpResponse = clientEndpoint->get("/", message = request);
-    io:println(httpResponse);
+    var httpResponse = clientEndpoint -> get("/", message = request);
     match httpResponse {
-    error err => {
-        amazonS3Error.message = err.message;
+        error err => {
+            amazonS3Error.message = err.message;
             return amazonS3Error;
         }
         http:Response response => {
+            int statusCode = response.statusCode;
             var amazonResponse = response.getXmlPayload();
             match amazonResponse {
                 error err => {
@@ -62,9 +48,241 @@ function AmazonS3Connector::getBucketList() returns BucketList|AmazonS3Error {
                     return amazonS3Error;
                 }
                 xml xmlResponse => {
-                    BucketList buc ={};
-                    return buc;
+                    if (statusCode == 200) {
+                        return converTotBucketList(xmlResponse);
+                    } else {
+                        amazonS3Error.message = xmlResponse["Message"].getTextValue();
+                        amazonS3Error.statusCode = statusCode;
+                        return amazonS3Error;
+                    }
                 }
+            }
+        }
+    }
+}
+
+function AmazonS3Connector::createBucket() returns Status|AmazonS3Error {
+
+    endpoint http:Client clientEndpoint = self.clientEndpoint;
+
+    AmazonS3Error amazonS3Error = {};
+    string requestURI;
+    string host;
+
+    http:Request request = new;
+    requestURI = "/";
+    host = self.bucketName + "."+ AMAZON_AWS_HOST;
+
+    request.setHeader(HOST, host);
+    request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
+    generateSignature(request, self.accessKeyId, self.secretAccessKey, self.region, PUT, requestURI, UNSIGNED_PAYLOAD);
+
+    var httpResponse = clientEndpoint-> put("/", request);
+    match httpResponse {
+        error err => {
+            amazonS3Error.message = err.message;
+            return amazonS3Error;
+        }
+        http:Response response => {
+            int statusCode = response.statusCode;
+            if (statusCode == 200) {
+                return convertToStatus(TRUE, statusCode);
+            }
+            else {
+                return convertToStatus(FALSE, statusCode);
+            }
+        }
+    }
+}
+
+function AmazonS3Connector::getObjectsInBucket() returns S3ObjectList|AmazonS3Error {
+
+    endpoint http:Client clientEndpoint = self.clientEndpoint;
+
+    AmazonS3Error amazonS3Error = {};
+    string requestURI;
+    string host;
+
+    http:Request request = new;
+    requestURI = "/";
+    host = self.bucketName + "."+ AMAZON_AWS_HOST;
+
+    request.setHeader(HOST, host);
+    request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
+    generateSignature(request, self.accessKeyId, self.secretAccessKey, self.region, GET, requestURI, UNSIGNED_PAYLOAD);
+
+    var httpResponse = clientEndpoint-> get("/", message = request);
+    match httpResponse {
+        error err => {
+            amazonS3Error.message = err.message;
+            return amazonS3Error;
+        }
+        http:Response response => {
+            int statusCode = response.statusCode;
+            var amazonResponse = response.getXmlPayload();
+            match amazonResponse {
+                error err => {
+                    amazonS3Error.message = err.message;
+                    return amazonS3Error;
+                }
+                xml xmlResponse => {
+                    if (statusCode == 200) {
+                        return convertToS3ObjectList(xmlResponse);
+                    }
+                    else{
+                        amazonS3Error.message = xmlResponse["Message"].getTextValue();
+                        amazonS3Error.statusCode = statusCode;
+                        return amazonS3Error;
+                    }
+                }
+            }
+        }
+    }
+}
+
+function AmazonS3Connector::getObject(string objectName) returns S3ObjectContent|AmazonS3Error {
+
+    endpoint http:Client clientEndpoint = self.clientEndpoint;
+
+    AmazonS3Error amazonS3Error = {};
+    string requestURI;
+    string host;
+
+    http:Request request = new;
+    requestURI = "/" + objectName;
+    host = self.bucketName + "."+ AMAZON_AWS_HOST;
+
+    request.setHeader(HOST, host);
+    request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
+    generateSignature(request, self.accessKeyId, self.secretAccessKey, self.region, GET, requestURI, UNSIGNED_PAYLOAD);
+
+    var httpResponse = clientEndpoint-> get(requestURI, message = request);
+    match httpResponse {
+        error err => {
+            amazonS3Error.message = err.message;
+            return amazonS3Error;
+        }
+        http:Response response => {
+            int statusCode = response.statusCode;
+            var amazonResponse = response.getPayloadAsString();
+            match amazonResponse {
+                error err => {
+                    amazonS3Error.message = err.message;
+                    return amazonS3Error;
+                }
+                string stringResponse => {
+                    if (statusCode == 200) {
+                        return convertToS3ObjectContent(stringResponse);
+                    }
+                    else{
+                        amazonS3Error.statusCode = statusCode;
+                        return amazonS3Error;
+                    }
+                }
+            }
+        }
+    }
+}
+
+function AmazonS3Connector::createObject(string objectName, string payload) returns Status|AmazonS3Error {
+
+    endpoint http:Client clientEndpoint = self.clientEndpoint;
+
+    AmazonS3Error amazonS3Error = {};
+    string requestURI;
+    string host;
+
+    http:Request request = new;
+    requestURI = "/" + objectName;
+    host = self.bucketName + "."+ AMAZON_AWS_HOST;
+
+    request.setHeader(HOST, host);
+    request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
+    request.setTextPayload(payload);
+    generateSignature(request, self.accessKeyId, self.secretAccessKey, self.region, PUT, requestURI, UNSIGNED_PAYLOAD);
+    var httpResponse = clientEndpoint-> put(requestURI, request);
+    match httpResponse {
+        error err => {
+            amazonS3Error.message = err.message;
+            return amazonS3Error;
+        }
+        http:Response response => {
+            int statusCode = response.statusCode;
+            if (statusCode == 200) {
+                return convertToStatus(TRUE, statusCode);
+            }
+            else {
+                return convertToStatus(FALSE, statusCode);
+            }
+        }
+    }
+}
+
+function AmazonS3Connector::deleteObject(string objectName) returns Status|AmazonS3Error {
+
+    endpoint http:Client clientEndpoint = self.clientEndpoint;
+
+    AmazonS3Error amazonS3Error = {};
+    string requestURI;
+    string host;
+
+    http:Request request = new;
+    requestURI = "/" + objectName;
+    host = self.bucketName + "."+ AMAZON_AWS_HOST;
+
+    request.setHeader(HOST, host);
+    request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
+    generateSignature(request, self.accessKeyId, self.secretAccessKey, self.region, DELETE, requestURI,
+        UNSIGNED_PAYLOAD);
+
+    var httpResponse = clientEndpoint-> delete(requestURI, request);
+    match httpResponse {
+        error err => {
+            amazonS3Error.message = err.message;
+            return amazonS3Error;
+        }
+        http:Response response => {
+            int statusCode = response.statusCode;
+            if (statusCode == 204) {
+                return convertToStatus(TRUE, statusCode);
+            }
+            else {
+                return convertToStatus(FALSE, statusCode);
+            }
+        }
+    }
+}
+
+function AmazonS3Connector::deleteBucket() returns Status|AmazonS3Error {
+
+    endpoint http:Client clientEndpoint = self.clientEndpoint;
+
+    AmazonS3Error amazonS3Error = {};
+    string requestURI;
+    string host;
+
+    http:Request request = new;
+    requestURI = "/";
+    host = self.bucketName + "."+ AMAZON_AWS_HOST;
+
+    request.setHeader(HOST, host);
+    request.setHeader(X_AMZ_CONTENT_SHA256, UNSIGNED_PAYLOAD);
+    generateSignature(request, self.accessKeyId, self.secretAccessKey, self.region, DELETE, requestURI,
+        UNSIGNED_PAYLOAD);
+
+    var httpResponse = clientEndpoint-> delete(requestURI, request);
+    match httpResponse {
+        error err => {
+            amazonS3Error.message = err.message;
+            return amazonS3Error;
+        }
+        http:Response response => {
+            int statusCode = response.statusCode;
+            if (statusCode == 204) {
+                return convertToStatus(TRUE, statusCode);
+            }
+            else {
+                return convertToStatus(FALSE, statusCode);
             }
         }
     }

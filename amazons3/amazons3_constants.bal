@@ -33,4 +33,11 @@
 @final string AWS4 = "AWS4";
 @final string ISO8601_BASIC_DATE_FORMAT = "yyyyMMdd'T'HHmmss'Z'";
 @final string SHORT_DATE_FORMAT = "yyyyMMdd";
+@final string GET = "GET";
+@final string PUT = "PUT";
+@final string DELETE = "DELETE";
+@final string TRUE = "TRUE";
+@final string FALSE = "FALSE";
+@final string HTTPS = "https://";
+@final string AMAZON_AWS_HOST = "s3.amazonaws.com";
 

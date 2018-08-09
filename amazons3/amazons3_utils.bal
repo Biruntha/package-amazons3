@@ -29,7 +29,6 @@ function generateSignature(http:Request request, string accessKeyId, string secr
     string canonicalQueryString;
     string stringToSign;
     string payloadBuilder;
-    string payloadStrBuilder;
     string authHeader;
     string amzDate;
     string shortDate;
@@ -42,9 +41,7 @@ function generateSignature(http:Request request, string accessKeyId, string secr
     string signValue;
     string encodedSignValue;
 
-    time:Time time = time:currentTime();
-    //time:Time t3 = time.toTimezone("London");
-
+    time:Time time = time:currentTime().toTimezone("GMT");
     amzDate = time.format(ISO8601_BASIC_DATE_FORMAT);
     shortDate = time.format(SHORT_DATE_FORMAT);
     request.setHeader(X_AMZ_DATE, amzDate);
@@ -52,7 +49,6 @@ function generateSignature(http:Request request, string accessKeyId, string secr
     canonicalRequest = canonicalRequest + "\n";
     encodedrequestURIValue = check http:encode(requestURI, UTF_8);
     canonicalRequest = canonicalRequest + encodedrequestURIValue.replace("%2F", "/");
-    //canonicalRequest = canonicalRequest + strings:replaceAll(uri:encode(requestURI), "%2F", "/");
     canonicalRequest = canonicalRequest + "\n";
     canonicalQueryString = "";
     canonicalRequest = canonicalRequest + canonicalQueryString;
@@ -61,7 +57,6 @@ function generateSignature(http:Request request, string accessKeyId, string secr
     if (payload != "" && payload != UNSIGNED_PAYLOAD){
         canonicalHeaders = canonicalHeaders + CONTENT_TYPE.toLower();
         canonicalHeaders = canonicalHeaders + ":";
-        //canonicalHeaders = canonicalHeaders + (messages:getHeader(msg, strings:toLowerCase("Content-Type")));
         canonicalHeaders = canonicalHeaders + request.getHeader(CONTENT_TYPE.toLower());
         canonicalHeaders = canonicalHeaders + "\n";
         signedHeader = signedHeader + CONTENT_TYPE.toLower();
@@ -104,14 +99,12 @@ function generateSignature(http:Request request, string accessKeyId, string secr
     if (payloadBuilder == UNSIGNED_PAYLOAD) {
         requestPayload = payloadBuilder;
     } else {
-        //requestPayload = strings:toLowerCase(utils:getHash(payloadBuilder, algorithm));
         requestPayload = crypto:hash(payloadBuilder, crypto:SHA256).toLower();
     }
 
     canonicalRequest = canonicalRequest + requestPayload;
 
     //Start creating the string to sign
-
     stringToSign = stringToSign + AWS4_HMAC_SHA256;
     stringToSign = stringToSign + "\n";
     stringToSign = stringToSign + amzDate;
@@ -124,17 +117,13 @@ function generateSignature(http:Request request, string accessKeyId, string secr
     stringToSign = stringToSign + "/";
     stringToSign = stringToSign + TERMINATION_STRING;
     stringToSign = stringToSign + "\n";
-    //stringToSign = stringToSign + strings:toLowerCase(utils:getHash(canonicalRequest, algorithm));
     stringToSign = stringToSign + crypto:hash(canonicalRequest, crypto:SHA256).toLower();
 
-    //signingKey =  utils:getHmacFromBase64( terminationString,utils:getHmacFromBase64( serviceName,
-    //utils:getHmacFromBase64( region,utils:getHmacFromBase64(shortDate,utils:base64encode("AWS4" + secretAccessKey),
-    //algorithm), algorithm), algorithm), algorithm);
     signValue = (AWS4 + secretAccessKey);
     encodedSignValue = check signValue.base64Encode();
     signingKey = crypto:hmac(TERMINATION_STRING, crypto:hmac(SERVICE_NAME, crypto:hmac(region, crypto:hmac(shortDate,
-                    encodedSignValue, crypto:SHA256).base16ToBase64Encode(), crypto:SHA256).base16ToBase64Encode(),
-            crypto:SHA256).base16ToBase64Encode(), crypto:SHA256).base16ToBase64Encode();
+                    encodedSignValue, keyEncoding = "BASE64", crypto:SHA256).base16ToBase64Encode(), keyEncoding = "BASE64", crypto:SHA256).base16ToBase64Encode(), keyEncoding = "BASE64",
+crypto:SHA256).base16ToBase64Encode(), keyEncoding = "BASE64", crypto:SHA256).base16ToBase64Encode();
 
     authHeader = authHeader + (AWS4_HMAC_SHA256);
     authHeader = authHeader + (" ");
@@ -157,8 +146,6 @@ function generateSignature(http:Request request, string accessKeyId, string secr
     authHeader = authHeader + (SIGNATURE);
     authHeader = authHeader + ("=");
 
-    //authHeader = authHeader + strings:toLowerCase(utils:base64ToBase16Encode(utils:getHmacFromBase64(stringToSign,
-    //signingKey, algorithm)));
-    authHeader = authHeader + crypto:hmac(stringToSign, signingKey, crypto:SHA256).toLower();
+    authHeader = authHeader + crypto:hmac(stringToSign, signingKey, keyEncoding = "BASE64", crypto:SHA256).toLower();
     request.setHeader(AUTHORIZATION, authHeader);
 }

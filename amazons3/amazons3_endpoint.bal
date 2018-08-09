@@ -17,13 +17,19 @@
 //
 
 import ballerina/http;
+import ballerina/io;
 
 function Client::init(AmazonS3Configuration config) {
-    config.uri ="https://s3.amazonaws.com";
+    self.amazonS3Connector.bucketName = config.bucketName;
     self.amazonS3Connector.accessKeyId = config.accessKeyId;
     self.amazonS3Connector.secretAccessKey = config.secretAccessKey;
     self.amazonS3Connector.region = config.region;
-    config.clientConfig.url = config.uri;
+    if (self.amazonS3Connector.bucketName != "" ){
+        config.clientConfig.url = HTTPS +self.amazonS3Connector.bucketName + "." + AMAZON_AWS_HOST;
+    }
+    else {
+        config.clientConfig.url = HTTPS + AMAZON_AWS_HOST;
+    }
     self.amazonS3Connector.clientEndpoint.init(config.clientConfig);
 }
 
