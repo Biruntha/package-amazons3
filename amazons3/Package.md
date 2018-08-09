@@ -49,14 +49,13 @@ You can now enter the credentials in the Amazon S3 client config:
 endpoint amazons3:Client amazonS3Client {
     accessKeyId:"<your_access_key_id>",
     secretAccessKey:"<your_secret_access_key>",
-    region:"<your_region>",
-    clientConfig:{}
+    region:"<your_region>"
 };
 ```
 
 The `createBucket` function creates a bucket.
 
-   `var createBucketResponse = amazonS3Client -> createBucket();`
+   `var createBucketResponse = amazonS3Client -> createBucket(bucketName);`
    
 If the creation was successful, the response from the `createBucket` function is a `Status` object with the success value. If the creation was unsuccessful, the response is a `AmazonS3Error`. The `match` operation can be used to handle the response if an error occurs.
 
@@ -64,7 +63,7 @@ If the creation was successful, the response from the `createBucket` function is
 match createBucketResponse {
     amazons3:Status bucketStatus => {
         //If successful, returns the status value as TRUE.
-        string status = <string> bucketStatus.success;
+        boolean status = <string> bucketStatus.success;
         io:println("Bucket Status: " + status);
     }
     //Unsuccessful attempts return a AmazonS3 error.
@@ -77,9 +76,8 @@ The `getBucketList` function retrives the existing buckets. It returns a `Bucket
 ```ballerina
 var getBucketListResponse = amazonS3ClientForGetBucketList -> getBucketList();
 match getBucketListResponse {
-    amazons3:BucketList bucketList => {
-        io:println("Owner Id: " + bucketList.owner.id);
-        io:println("Name of the first bucket: " + bucketList.buckets[0].name);
+    amazons3:Bucket[] buckets => {
+        io:println("Name of the first bucket: " + buckets[0].name);
     }
     amazons3:AmazonS3Error e => io:println(e);
 }
@@ -93,8 +91,7 @@ function main(string... args) {
     endpoint amazons3:Client amazonS3Client {
         accessKeyId:"<your_access_key_id>",
         secretAccessKey:"<your_secret_access_key>",
-        region:"<your_region>",
-        clientConfig:{}
+        region:"<your_region>"
     };
     
     string bucketName = "testBallerina";

@@ -35,8 +35,7 @@ In order for you to use the Amazon S3 Connector, first you need to create a Amaz
 endpoint amazons3:Client amazonS3Client {
     accessKeyId:"",
     secretAccessKey:"",
-    region:"",
-    clientConfig:{}
+    region:""
 };
 ```
 
@@ -50,16 +49,15 @@ function main(string... args) {
     endpoint amazons3:Client amazonS3Client {
         accessKeyId:"",
         secretAccessKey:"",
-        region:"",
-        clientConfig:{}
+        region:""
     };
 
     string bucketName = "testBallerina";
     var createBucketResponse = amazonS3Client -> createBucket(bucketName);
     match createBucketResponse {
         amazons3:Status bucketStatus => {
-            //If successful, returns the status value as TRUE.
-            string status = <string> bucketStatus.success;
+            //If successful, returns the status value as true.
+            boolean status = <string> bucketStatus.success;
             io:println("Bucket Status: " + status);
         }
         //Unsuccessful attempts return a AmazonS3 error.
