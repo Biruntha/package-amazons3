@@ -29,7 +29,7 @@ First, import the `kesavan/amazons3` package into the Ballerina project.
 import kesavan/amazons3;
 ```
 
-In order for you to use the Amazon S3 Connector, first you need to create a AmazonS3 Client endpoint.
+In order for you to use the Amazon S3 Connector, first you need to create an AmazonS3 Client endpoint.
 
 ```ballerina
 endpoint amazons3:Client amazonS3Client {
@@ -60,7 +60,7 @@ function main(string... args) {
             boolean status = <string> bucketStatus.success;
             io:println("Bucket Status: " + status);
         }
-        //Unsuccessful attempts return a AmazonS3 error.
+        //Unsuccessful attempts return an AmazonS3 error.
         amazons3:AmazonS3Error e => io:println(e);
     }
 }
