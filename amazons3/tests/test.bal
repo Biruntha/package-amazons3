@@ -106,9 +106,8 @@ function testGetAllObjects() {
     log:printInfo("amazonS3Client -> getAllObjects()");
     var rs = amazonS3Client -> getAllObjects(testBucketName);
     match rs {
-        S3ObjectList s3ObjectList => {
-            string name = s3ObjectList.name;
-            test:assertTrue(name.length() > 0, msg = "Failed to call getAllObjects()");
+        S3Object[] s3Object => {
+            test:assertTrue(lengthof s3Object > 0, msg = "Failed to call getAllObjects()");
         }
         AmazonS3Error err => {
             test:assertFail(msg = err.message);

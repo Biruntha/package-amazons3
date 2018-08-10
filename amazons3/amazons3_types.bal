@@ -43,9 +43,10 @@ public type AmazonS3Connector object {
 
     documentation {
         Retrieve the existing objects in a given bucket.
-        R{{}} - If success, returns S3ObjectList object, else returns AmazonS3Error object.
+        P{{bucketName}} - The name of the bucket.
+        R{{}} - If success, returns S3Object[] object, else returns AmazonS3Error object.
     }
-    public function getAllObjects(string bucketName) returns S3ObjectList|AmazonS3Error;
+    public function getAllObjects(string bucketName) returns S3Object[]|AmazonS3Error;
 
     documentation {
         Retrieve the existing buckets.
@@ -124,38 +125,20 @@ public type Bucket record {
 };
 
 documentation {
-    Define the s3objectlist type.
-    F{{name}} - The name of the bucket.
-    F{{prefix}} - The string to limits the response to keys that begin with the specified prefix.
-    F{{marker}} - The key to start with when listing objects in a bucket.
-    F{{maxKeys}} - The maximum number of keys returned in the response body.
-    F{{isTruncated}} - The creation date of the bucket.
-    F{{s3Objects}} - The array of objects.
-}
-public type S3ObjectList record {
-    string name;
-    string prefix;
-    string marker;
-    string maxKeys;
-    string isTruncated;
-    S3Object[] s3Objects;
-};
-
-documentation {
     Define the S3Object type.
-    F{{key}} - The name of the object.
+    F{{objectName}} - The name of the object.
     F{{lastModified}} - The last modified date of the object.
     F{{eTag}} - The etag of the object.
-    F{{size}} - The size of the object.
+    F{{objectSize}} - The size of the object.
     F{{ownerId}} - The id of the object owner.
     F{{ownerDisplayName}} - The display name of the object owner.
     F{{storageClass}} - The storage class of the object.
 }
 public type S3Object record {
-    string key;
+    string objectName;
     string lastModified;
     string eTag;
-    string size;
+    string objectSize;
     string ownerId;
     string ownerDisplayName;
     string storageClass;

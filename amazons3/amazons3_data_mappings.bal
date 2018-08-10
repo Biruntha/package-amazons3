@@ -30,30 +30,23 @@ function converTotBuckets(xml response) returns Bucket[] {
     return buckets;
 }
 
-function convertToS3ObjectList(xml response) returns S3ObjectList {
-    S3ObjectList s3ObjectList = {};
+function convertToS3Objects(xml response) returns S3Object[] {
     S3Object[] s3Objects;
-    s3ObjectList.name = response["Name"].getTextValue();
-    s3ObjectList.prefix = response["Prefix"].getTextValue();
-    s3ObjectList.marker = response["Marker"].getTextValue();
-    s3ObjectList.maxKeys = response["MaxKeys"].getTextValue();
-    s3ObjectList.isTruncated = response["IsTruncated"].getTextValue();
     xml contents = response["Contents"];
 
     foreach i, c in contents {
         xml content = c.elements();
         S3Object s3Object = {};
-        s3Object.key = content["Key"].getTextValue();
+        s3Object.objectName = content["Key"].getTextValue();
         s3Object.lastModified = content["LastModified"].getTextValue();
         s3Object.eTag = content["ETag"].getTextValue();
-        s3Object.size = content["Size"].getTextValue();
+        s3Object.objectSize = content["Size"].getTextValue();
         s3Object.ownerId = content["Owner"]["ID"].getTextValue();
         s3Object.ownerDisplayName = content["Owner"]["DisplayName"].getTextValue();
         s3Object.storageClass = content["StorageClass"].getTextValue();
         s3Objects[i] = s3Object;
     }
-    s3ObjectList.s3Objects = s3Objects;
-    return s3ObjectList;
+    return s3Objects;
 }
 
 function convertToStatus(int statusCode) returns Status {

@@ -1,7 +1,7 @@
 [project]
-org-name = "kesavan"
-version = "0.9.2"
+org-name = "biruntha13"
+version = "0.9.4"
 authors = ["WSO2"]
 keywords = ["amazons3", "amazon"]
-repository = "https://github.com/kesavany/package-amazons3"
+repository = "https://github.com/Biruntha/package-amazons3"
 

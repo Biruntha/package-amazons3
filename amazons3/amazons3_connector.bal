@@ -34,6 +34,7 @@ function AmazonS3Connector::getBucketList() returns Bucket[]|AmazonS3Error {
     match httpResponse {
         error err => {
             amazonS3Error.message = err.message;
+            amazonS3Error.cause = err.cause;
             return amazonS3Error;
         }
         http:Response response => {
@@ -42,6 +43,7 @@ function AmazonS3Connector::getBucketList() returns Bucket[]|AmazonS3Error {
             match amazonResponse {
                 error err => {
                     amazonS3Error.message = err.message;
+                    amazonS3Error.cause = err.cause;
                     return amazonS3Error;
                 }
                 xml xmlResponse => {
@@ -75,6 +77,7 @@ function AmazonS3Connector::createBucket(string bucketName) returns Status|Amazo
     match httpResponse {
         error err => {
             amazonS3Error.message = err.message;
+            amazonS3Error.cause = err.cause;
             return amazonS3Error;
         }
         http:Response response => {
@@ -84,7 +87,7 @@ function AmazonS3Connector::createBucket(string bucketName) returns Status|Amazo
     }
 }
 
-function AmazonS3Connector::getAllObjects(string bucketName) returns S3ObjectList|AmazonS3Error {
+function AmazonS3Connector::getAllObjects(string bucketName) returns S3Object[]|AmazonS3Error {
 
     endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
@@ -101,6 +104,7 @@ function AmazonS3Connector::getAllObjects(string bucketName) returns S3ObjectLis
     match httpResponse {
         error err => {
             amazonS3Error.message = err.message;
+            amazonS3Error.cause = err.cause;
             return amazonS3Error;
         }
         http:Response response => {
@@ -109,11 +113,12 @@ function AmazonS3Connector::getAllObjects(string bucketName) returns S3ObjectLis
             match amazonResponse {
                 error err => {
                     amazonS3Error.message = err.message;
+                    amazonS3Error.cause = err.cause;
                     return amazonS3Error;
                 }
                 xml xmlResponse => {
                     if (statusCode == 200) {
-                        return convertToS3ObjectList(xmlResponse);
+                        return convertToS3Objects(xmlResponse);
                     }
                     else{
                         amazonS3Error.message = xmlResponse["Message"].getTextValue();
@@ -143,6 +148,7 @@ function AmazonS3Connector::getObject(string bucketName, string objectName) retu
     match httpResponse {
         error err => {
             amazonS3Error.message = err.message;
+            amazonS3Error.cause = err.cause;
             return amazonS3Error;
         }
         http:Response response => {
@@ -151,6 +157,7 @@ function AmazonS3Connector::getObject(string bucketName, string objectName) retu
             match amazonResponse {
                 error err => {
                     amazonS3Error.message = err.message;
+                    amazonS3Error.cause = err.cause;
                     return amazonS3Error;
                 }
                 string stringResponse => {
@@ -184,6 +191,7 @@ function AmazonS3Connector::createObject(string bucketName, string objectName, s
     match httpResponse {
         error err => {
             amazonS3Error.message = err.message;
+            amazonS3Error.cause = err.cause;
             return amazonS3Error;
         }
         http:Response response => {
@@ -211,6 +219,7 @@ function AmazonS3Connector::deleteObject(string bucketName, string objectName) r
     match httpResponse {
         error err => {
             amazonS3Error.message = err.message;
+            amazonS3Error.cause = err.cause;
             return amazonS3Error;
         }
         http:Response response => {

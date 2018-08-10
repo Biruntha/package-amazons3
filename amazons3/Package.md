@@ -7,12 +7,12 @@ The Amazon S3 connector allows you to access the Amazon S3 REST API through ball
 
 **Buckets Operations**
 
-The `kesavan/amazons3` package contains operations that work with buckets. You can list the existing buckets, create a bucket, 
+The `biruntha13/amazons3` package contains operations that work with buckets. You can list the existing buckets, create a bucket,
 delete a bucket and list objects in a bucket.
 
 **Objects Operations**
 
-The `kesavan/amazons3` package contains operations that create an object, delete an object and retrieve an object. 
+The `biruntha13/amazons3` package contains operations that create an object, delete an object and retrieve an object.
 
 
 
@@ -25,10 +25,10 @@ The `kesavan/amazons3` package contains operations that create an object, delete
 
 ## Sample
 
-First, import the `kesavan/amazons3` package into the Ballerina project.
+First, import the `biruntha13/amazons3` package into the Ballerina project.
 
 ```ballerina
-import kesavan/amazons3;
+import biruntha13/amazons3;
 ```
     
 The Amazon S3 connector can be instantiated using the accessKeyId, secretAccessKey, region, 
@@ -82,7 +82,7 @@ match getBucketListResponse {
 ## Example
 ```ballerina
 import ballerina/io;
-import kesavan/amazons3;
+import biruntha13/amazons3;
 
 function main(string... args) {
     endpoint amazons3:Client amazonS3Client {
@@ -90,8 +90,9 @@ function main(string... args) {
         secretAccessKey:"<your_secret_access_key>",
         region:"<your_region>"
     };
-    
+
     string bucketName = "testBallerina";
+    io:println("-----------------Calling createBucket() ------------------");
     var createBucketResponse = amazonS3Client -> createBucket(bucketName);
     match createBucketResponse {
         amazons3:Status bucketStatus => {
@@ -100,15 +101,20 @@ function main(string... args) {
         }
         amazons3:AmazonS3Error e => io:println(e);
     }
-    
+
+    io:println("-----------------Calling getBucketList() ------------------");
     var getBucketListResponse = amazonS3Client -> getBucketList();
     match getBucketListResponse {
         amazons3:Bucket[] buckets => {
-            io:println("Name of the first bucket: " + buckets[0].name);
+            io:println("Listing all buckets: ");
+            foreach bucket in buckets {
+                io:println("Bucket Name: " + bucket.name);
+            }
         }
         amazons3:AmazonS3Error e => io:println(e);
     }
 
+    io:println("-----------------Calling createObject() ------------------");
     var createObjectResponse = amazonS3Client -> createObject(bucketName, "test.txt","Sample content");
     match createObjectResponse {
         amazons3:Status objectStatus => {
@@ -118,6 +124,7 @@ function main(string... args) {
         amazons3:AmazonS3Error e => io:println(e);
     }
 
+    io:println("-----------------Calling getObject() ------------------");
     var getObjectResponse = amazonS3Client->getObject(bucketName, "test.txt");
     match getObjectResponse {
         amazons3:S3ObjectContent s3ObjectContent => {
@@ -127,15 +134,21 @@ function main(string... args) {
         amazons3:AmazonS3Error e => io:println(e);
     }
 
+    io:println("-----------------Calling getAllObjects() ------------------");
     var getAllObjectsResponse = amazonS3Client -> getAllObjects(bucketName);
     match getAllObjectsResponse {
-        amazons3:S3ObjectList s3ObjectList => {
-            string name = s3ObjectList.s3Objects[0].key;
-            io:println("Name of the first object: " + name);
+        amazons3:S3Object[] s3Objects => {
+            io:println("Listing all object: ");
+            foreach s3Object in s3Objects {
+                io:println("---------------------------------");
+                io:println("Object Name: " + s3Object.objectName);
+                io:println("Object Size: " + s3Object.objectSize);
+            }
         }
         amazons3:AmazonS3Error e => io:println(e);
     }
 
+    io:println("-----------------Calling deleteObject() ------------------");
     var deleteObjectResponse = amazonS3Client -> deleteObject(bucketName, "test.txt");
     match deleteObjectResponse {
         amazons3:Status objectStatus => {
@@ -145,6 +158,7 @@ function main(string... args) {
         amazons3:AmazonS3Error e => io:println(e);
     }
 
+    io:println("-----------------Calling deleteBucket() ------------------");
     var deleteBucketResponse = amazonS3Client -> deleteBucket(bucketName);
     match deleteBucketResponse {
         amazons3:Status bucketStatus => {

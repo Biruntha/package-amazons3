@@ -18,15 +18,15 @@ The following sections provide you with information on how to use the Ballerina 
 
 Clone the repository by running the following command 
 ```shell
-git clone https://github.com/kesavany/package-amazons3.git
+git clone https://github.com/Biruntha/package-amazons3.git
 ```
 
 ### Working with Amazon S3 Connector 
 
-First, import the `kesavan/amazons3` package into the Ballerina project.
+First, import the `biruntha13/amazons3` package into the Ballerina project.
 
 ```ballerina
-import kesavan/amazons3;
+import biruntha13/amazons3;
 ```
 
 In order for you to use the Amazon S3 Connector, first you need to create an AmazonS3 Client endpoint.
@@ -43,7 +43,7 @@ endpoint amazons3:Client amazonS3Client {
 
 ```ballerina
 import ballerina/io;
-import kesavan/amazons3;
+import biruntha13/amazons3;
 
 function main(string... args) {
     endpoint amazons3:Client amazonS3Client {
