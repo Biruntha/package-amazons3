@@ -49,11 +49,12 @@ public type AmazonS3Connector object {
     public function getAllObjects(string bucketName) returns S3Object[]|AmazonS3Error;
 
     documentation {
-        Retrieve the existing buckets.
+        Retrieves objects from Amazon S3.
+        P{{bucketName}} - The name of the bucket.
         P{{objectName}} - The name of the object.
         R{{}} - If success, returns S3ObjectContent object, else returns AmazonS3Error object.
     }
-    public function getObject(string bucketName, string objectName) returns S3ObjectContent|AmazonS3Error;
+    public function getObject(string bucketName, string objectName) returns S3Object|AmazonS3Error;
 
     documentation {
         Create an object.
@@ -133,6 +134,7 @@ documentation {
     F{{ownerId}} - The id of the object owner.
     F{{ownerDisplayName}} - The display name of the object owner.
     F{{storageClass}} - The storage class of the object.
+    F{{content}} - The content of the object.
 }
 public type S3Object record {
     string objectName;
@@ -142,6 +144,7 @@ public type S3Object record {
     string ownerId;
     string ownerDisplayName;
     string storageClass;
+    string content;
 };
 
 documentation {
@@ -152,14 +155,6 @@ documentation {
 public type Status record {
     boolean success;
     int statusCode;
-};
-
-documentation {
-    Define the S3ObjectContent type.
-    F{{content}} - The content of the object.
-}
-public type S3ObjectContent record {
-    string content;
 };
 
 documentation {

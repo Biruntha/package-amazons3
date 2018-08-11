@@ -16,7 +16,7 @@
 
 import ballerina/io;
 
-function converTotBuckets(xml response) returns Bucket[] {
+function getBucketsList(xml response) returns Bucket[] {
     Bucket[] buckets;
     xml bucketsDetails = response["Buckets"];
     foreach i, b in bucketsDetails.*.elements(){
@@ -30,7 +30,7 @@ function converTotBuckets(xml response) returns Bucket[] {
     return buckets;
 }
 
-function convertToS3Objects(xml response) returns S3Object[] {
+function getS3ObjectsList(xml response) returns S3Object[] {
     S3Object[] s3Objects;
     xml contents = response["Contents"];
 
@@ -49,7 +49,7 @@ function convertToS3Objects(xml response) returns S3Object[] {
     return s3Objects;
 }
 
-function convertToStatus(int statusCode) returns Status {
+function getStatus(int statusCode) returns Status {
     Status s = {};
     s.statusCode = statusCode;
     if (statusCode == 200 || statusCode == 204){
@@ -61,8 +61,8 @@ function convertToStatus(int statusCode) returns Status {
     return s;
 }
 
-function convertToS3ObjectContent(string response) returns S3ObjectContent {
-    S3ObjectContent objectContent = {};
-    objectContent.content =  response;
-    return objectContent;
+function getS3Object(string response) returns S3Object {
+    S3Object s3Object = {};
+    s3Object.content =  response;
+    return s3Object;
 }

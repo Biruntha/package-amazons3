@@ -124,15 +124,16 @@ function main(string... args) {
         amazons3:AmazonS3Error e => io:println(e);
     }
 
-    io:println("-----------------Calling getObject() ------------------");
-    var getObjectResponse = amazonS3Client->getObject(bucketName, "test.txt");
-    match getObjectResponse {
-        amazons3:S3ObjectContent s3ObjectContent => {
-            string content = s3ObjectContent.content;
-            io:println("Object content: " + content);
-        }
-        amazons3:AmazonS3Error e => io:println(e);
-    }
+   io:println("-----------------Calling getObject() ------------------");
+   var getObjectResponse = amazonS3Client->getObject(bucketName, "test.txt");
+   match getObjectResponse {
+       amazons3:S3Object s3Object => {
+           io:println(s3Object);
+           string content = s3Object.content;
+           io:println("Object content: " + content);
+       }
+       amazons3:AmazonS3Error e => io:println(e);
+   }
 
     io:println("-----------------Calling getAllObjects() ------------------");
     var getAllObjectsResponse = amazonS3Client -> getAllObjects(bucketName);

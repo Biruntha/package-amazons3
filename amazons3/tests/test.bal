@@ -88,8 +88,8 @@ function testGetObject() {
     log:printInfo("amazonS3Client -> getObject()");
     var rs = amazonS3Client->getObject(testBucketName, "test.txt");
     match rs {
-        S3ObjectContent s3ObjectContent => {
-            string content = s3ObjectContent.content;
+        S3Object s3Object => {
+            string content = s3Object.content;
             test:assertTrue(content.length() > 0, msg = "Failed to call getObject()");
 
         }

@@ -48,7 +48,7 @@ function AmazonS3Connector::getBucketList() returns Bucket[]|AmazonS3Error {
                 }
                 xml xmlResponse => {
                     if (statusCode == 200) {
-                        return converTotBuckets(xmlResponse);
+                        return getBucketsList(xmlResponse);
                     } else {
                         amazonS3Error.message = xmlResponse["Message"].getTextValue();
                         amazonS3Error.statusCode = statusCode;
@@ -82,7 +82,7 @@ function AmazonS3Connector::createBucket(string bucketName) returns Status|Amazo
         }
         http:Response response => {
             int statusCode = response.statusCode;
-            return convertToStatus(statusCode);
+            return getStatus(statusCode);
         }
     }
 }
@@ -118,7 +118,7 @@ function AmazonS3Connector::getAllObjects(string bucketName) returns S3Object[]|
                 }
                 xml xmlResponse => {
                     if (statusCode == 200) {
-                        return convertToS3Objects(xmlResponse);
+                        return getS3ObjectsList(xmlResponse);
                     }
                     else{
                         amazonS3Error.message = xmlResponse["Message"].getTextValue();
@@ -131,7 +131,7 @@ function AmazonS3Connector::getAllObjects(string bucketName) returns S3Object[]|
     }
 }
 
-function AmazonS3Connector::getObject(string bucketName, string objectName) returns S3ObjectContent|AmazonS3Error {
+function AmazonS3Connector::getObject(string bucketName, string objectName) returns S3Object|AmazonS3Error {
 
     endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
@@ -162,7 +162,7 @@ function AmazonS3Connector::getObject(string bucketName, string objectName) retu
                 }
                 string stringResponse => {
                     if (statusCode == 200) {
-                        return convertToS3ObjectContent(stringResponse);
+                        return getS3Object(stringResponse);
                     }
                     else{
                         amazonS3Error.statusCode = statusCode;
@@ -196,7 +196,7 @@ function AmazonS3Connector::createObject(string bucketName, string objectName, s
         }
         http:Response response => {
             int statusCode = response.statusCode;
-            return convertToStatus(statusCode);
+            return getStatus(statusCode);
         }
     }
 }
@@ -224,7 +224,7 @@ function AmazonS3Connector::deleteObject(string bucketName, string objectName) r
         }
         http:Response response => {
             int statusCode = response.statusCode;
-            return convertToStatus(statusCode);
+            return getStatus(statusCode);
         }
     }
 }
@@ -251,7 +251,7 @@ function AmazonS3Connector::deleteBucket(string bucketName) returns Status|Amazo
         }
         http:Response response => {
             int statusCode = response.statusCode;
-            return convertToStatus(statusCode);
+            return getStatus(statusCode);
         }
     }
 }
