@@ -60,7 +60,7 @@ function AmazonS3Connector::getBucketList() returns Bucket[]|AmazonS3Error {
     }
 }
 
-function AmazonS3Connector::createBucket(string bucketName) returns Status|AmazonS3Error {
+function AmazonS3Connector::createBucket(string bucketName) returns int|AmazonS3Error {
 
     endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
@@ -82,7 +82,24 @@ function AmazonS3Connector::createBucket(string bucketName) returns Status|Amazo
         }
         http:Response response => {
             int statusCode = response.statusCode;
-            return getStatus(statusCode);
+            if (statusCode == 200 || statusCode == 204) {
+                return statusCode;
+            } else {
+                var errorResponse =response.getXmlPayload();
+                match errorResponse {
+                    error err => {
+                        amazonS3Error.message = err.message;
+                        amazonS3Error.cause = err.cause;
+                        return amazonS3Error;
+                    }
+                    xml xmlResponse => {
+                        amazonS3Error.message = xmlResponse["Message"].getTextValue();
+                        amazonS3Error.statusCode = statusCode;
+                        return amazonS3Error;
+
+                    }
+                }
+            }
         }
     }
 }
@@ -174,7 +191,7 @@ function AmazonS3Connector::getObject(string bucketName, string objectName) retu
     }
 }
 
-function AmazonS3Connector::createObject(string bucketName, string objectName, string payload) returns Status|AmazonS3Error {
+function AmazonS3Connector::createObject(string bucketName, string objectName, string payload) returns int|AmazonS3Error {
 
     endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
@@ -196,12 +213,29 @@ function AmazonS3Connector::createObject(string bucketName, string objectName, s
         }
         http:Response response => {
             int statusCode = response.statusCode;
-            return getStatus(statusCode);
+            if (statusCode == 200 || statusCode == 204) {
+                return statusCode;
+            } else {
+                var errorResponse =response.getXmlPayload();
+                match errorResponse {
+                    error err => {
+                        amazonS3Error.message = err.message;
+                        amazonS3Error.cause = err.cause;
+                        return amazonS3Error;
+                    }
+                    xml xmlResponse => {
+                        amazonS3Error.message = xmlResponse["Message"].getTextValue();
+                        amazonS3Error.statusCode = statusCode;
+                        return amazonS3Error;
+
+                    }
+                }
+            }
         }
     }
 }
 
-function AmazonS3Connector::deleteObject(string bucketName, string objectName) returns Status|AmazonS3Error {
+function AmazonS3Connector::deleteObject(string bucketName, string objectName) returns int|AmazonS3Error {
 
     endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
@@ -224,12 +258,29 @@ function AmazonS3Connector::deleteObject(string bucketName, string objectName) r
         }
         http:Response response => {
             int statusCode = response.statusCode;
-            return getStatus(statusCode);
+            if (statusCode == 200 || statusCode == 204) {
+                return statusCode;
+            } else {
+                var errorResponse =response.getXmlPayload();
+                match errorResponse {
+                    error err => {
+                        amazonS3Error.message = err.message;
+                        amazonS3Error.cause = err.cause;
+                        return amazonS3Error;
+                    }
+                    xml xmlResponse => {
+                        amazonS3Error.message = xmlResponse["Message"].getTextValue();
+                        amazonS3Error.statusCode = statusCode;
+                        return amazonS3Error;
+
+                    }
+                }
+            }
         }
     }
 }
 
-function AmazonS3Connector::deleteBucket(string bucketName) returns Status|AmazonS3Error {
+function AmazonS3Connector::deleteBucket(string bucketName) returns int|AmazonS3Error {
 
     endpoint http:Client clientEndpoint = getClientEndpoint(bucketName);
 
@@ -251,7 +302,24 @@ function AmazonS3Connector::deleteBucket(string bucketName) returns Status|Amazo
         }
         http:Response response => {
             int statusCode = response.statusCode;
-            return getStatus(statusCode);
+            if (statusCode == 200 || statusCode == 204) {
+                return statusCode;
+            } else {
+                var errorResponse =response.getXmlPayload();
+                match errorResponse {
+                    error err => {
+                        amazonS3Error.message = err.message;
+                        amazonS3Error.cause = err.cause;
+                        return amazonS3Error;
+                    }
+                    xml xmlResponse => {
+                        amazonS3Error.message = xmlResponse["Message"].getTextValue();
+                        amazonS3Error.statusCode = statusCode;
+                        return amazonS3Error;
+
+                    }
+                }
+            }
         }
     }
 }

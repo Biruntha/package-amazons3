@@ -37,9 +37,9 @@ public type AmazonS3Connector object {
 
     documentation {
         Create a bucket.
-        R{{}} - If success, returns Status object, else returns AmazonS3Error object.
+        R{{}} - If success, returns StatusCode, else returns AmazonS3Error object.
     }
-    public function createBucket(string bucketName) returns Status|AmazonS3Error;
+    public function createBucket(string bucketName) returns int|AmazonS3Error;
 
     documentation {
         Retrieve the existing objects in a given bucket.
@@ -60,22 +60,22 @@ public type AmazonS3Connector object {
         Create an object.
         P{{objectName}} - The name of the object.
         P{{payload}} - The file that needed to be added to the bucket.
-        R{{}} - If success, returns Status object, else returns AmazonS3Error object.
+        R{{}} - If success, returns StatusCode, else returns AmazonS3Error object.
     }
-    public function createObject(string bucketName, string objectName, string payload) returns Status|AmazonS3Error;
+    public function createObject(string bucketName, string objectName, string payload) returns int|AmazonS3Error;
 
     documentation {
         Delete an object.
         P{{objectName}} - The name of the object.
-        R{{}} - If success, returns Status object, else returns AmazonS3Error object.
+        R{{}} - If success, returns StatusCode, else returns AmazonS3Error object.
     }
-    public function deleteObject(string bucketName, string objectName) returns Status|AmazonS3Error;
+    public function deleteObject(string bucketName, string objectName) returns int|AmazonS3Error;
 
     documentation {
         Delete a bucket.
-        R{{}} - If success, returns Status object, else returns AmazonS3Error object.
+        R{{}} - If success, returns StatusCode, else returns AmazonS3Error object.
     }
-    public function deleteBucket(string bucketName) returns Status|AmazonS3Error;
+    public function deleteBucket(string bucketName) returns int|AmazonS3Error;
 };
 
 documentation {
@@ -145,16 +145,6 @@ public type S3Object record {
     string ownerDisplayName;
     string storageClass;
     string content;
-};
-
-documentation {
-    Define the status type.
-    F{{success}} - The status of the AmazonS3 operation.
-    F{{statusCode}} - The status code of the response.
-}
-public type Status record {
-    boolean success;
-    int statusCode;
 };
 
 documentation {

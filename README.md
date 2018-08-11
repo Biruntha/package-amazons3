@@ -55,10 +55,8 @@ function main(string... args) {
     string bucketName = "testBallerina";
     var createBucketResponse = amazonS3Client -> createBucket(bucketName);
     match createBucketResponse {
-        amazons3:Status bucketStatus => {
-            //If successful, returns the status value as true.
-            boolean status = <string> bucketStatus.success;
-            io:println("Bucket Status: " + status);
+        int statusCode => {
+            io:println("Bucket Status: " + statusCode);
         }
         //Unsuccessful attempts return an AmazonS3 error.
         amazons3:AmazonS3Error e => io:println(e);

@@ -54,9 +54,8 @@ function testCreateBucket() {
     log:printInfo("amazonS3Client -> createBucket()");
     var rs = amazonS3Client -> createBucket(testBucketName);
     match rs {
-        Status status => {
-            boolean bucketStatus = status.success;
-            test:assertTrue(bucketStatus, msg = "Failed createBucket()");
+        int statusCode => {
+            test:assertEquals(statusCode, 200, msg = "Failed createBucket()");
         }
         AmazonS3Error err => {
             test:assertFail(msg = err.message);
@@ -71,9 +70,8 @@ function testCreateObject() {
     log:printInfo("amazonS3Client -> createObject()");
     var rs = amazonS3Client -> createObject(testBucketName, "test.txt","Sample content");
     match rs {
-        Status staus => {
-            boolean objectStatus = staus.success;
-            test:assertTrue(objectStatus, msg = "Failed createObject()");
+        int statusCode => {
+            test:assertEquals(statusCode, 200, msg = "Failed createObject()");
         }
         AmazonS3Error err => {
             test:assertFail(msg = err.message);
@@ -122,9 +120,8 @@ function testDeleteObject() {
     log:printInfo("amazonS3Client -> deleteObject()");
     var rs = amazonS3Client -> deleteObject(testBucketName, "test.txt");
     match rs {
-        Status staus => {
-            boolean objectStatus = staus.success;
-            test:assertTrue(objectStatus, msg = "Failed deleteObject()");
+        int statusCode => {
+            test:assertEquals(statusCode, (200|204), msg = "Failed deleteObject()");
         }
         AmazonS3Error err => {
             test:assertFail(msg = err.message);
@@ -139,9 +136,8 @@ function testDeleteBucket() {
     log:printInfo("amazonS3Client -> deleteBucket()");
     var rs = amazonS3Client -> deleteBucket(testBucketName);
     match rs {
-        Status staus => {
-            boolean bucketStatus = staus.success;
-            test:assertTrue(bucketStatus, msg = "Failed deleteBucket()");
+        int statusCode => {
+            test:assertEquals(statusCode, (200|204), msg = "Failed deleteBucket()");
         }
         AmazonS3Error err => {
             test:assertFail(msg = err.message);
